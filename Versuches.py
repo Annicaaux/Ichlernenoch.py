@@ -11,7 +11,7 @@ st.markdown("""
     <style>
         html, body, [class*="st"] {
             background-color: #f5f5dc;
-            font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+            font-family: ´Marker Felt´, fantasy;
             color: 	#8b6914;
         }
 
