@@ -15,5 +15,4 @@ st.markdown("""
             color: 	#8b6914;
         }
 
-    </style>
 """, unsafe_allow_html=True)
