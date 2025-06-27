@@ -14,7 +14,7 @@ st.markdown("""
         
         /* Spezielle Styling für den Titel */
         .title-custom {
-            font-family: 'Comic Sans MS', cursive, fantasy;
+            font-family: 'Marker Felt', fantasy;
             font-size: 3rem;
             font-weight: bold;
             color: #8b6914;
@@ -25,10 +25,9 @@ st.markdown("""
         
         /* Alternative: Streamlit's eingebaute Titel-Klasse überschreiben */
         .stTitle > h1 {
-            font-family: 'Impact', 'Arial Black', sans-serif;
+            font-family: 'Marker Felt', fantasy;
             font-size: 4rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
         }
     </style>
 """, unsafe_allow_html=True)
