@@ -16,3 +16,15 @@ st.markdown("""
             font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
             color: #2f2f2f;
         }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #3b3b3b;
+        }
+
+        .postit {
+            font-family: 'Patrick Hand', 'Comic Sans MS', cursive;
+        }
+    </style>
+""", unsafe_allow_html=True)
