@@ -14,7 +14,7 @@ st.markdown("""
         
         /* Spezielle Styling für den Titel */
         .title-custom {
-            font-family: 'Marker Felt', fantasy;
+            font-family: 'Marker Felt', 'Bradley Hand', 'Brush Script MT', cursive, fantasy;
             font-size: 3rem;
             font-weight: bold;
             color: #8b6914;
@@ -25,9 +25,10 @@ st.markdown("""
         
         /* Alternative: Streamlit's eingebaute Titel-Klasse überschreiben */
         .stTitle > h1 {
-            font-family: 'Marker Felt', fantasy;
-            font-size: 4rem;
-            letter-spacing: 1px;
+            font-family: 'Marker Felt', 'Bradley Hand', 'Brush Script MT', cursive, fantasy !important;
+            font-size: 4rem !important;
+            letter-spacing: 1px !important;
+            text-align: center !important;
         }
     </style>
 """, unsafe_allow_html=True)
