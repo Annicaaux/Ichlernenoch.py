@@ -1,18 +1,18 @@
 import streamlit as st
 
 # --- Seiten-Setup ---
-st.set_page_config(page_title="Guck mal Mommy", layout="wide")
+st.set_page_config(page_title="Freud ist ein Pups", layout="wide")
 
 # --- Titel der App ---
-st.title("Guck mal Mommy")
+st.title("Freud ist ein Pups")
 
 # --- Globales CSS Styling ---
 st.markdown("""
     <style>
         html, body, [class*="st"] {
-            background-color: #fdf6ee;
+            background-color: #f5f5dc;
             font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
-            color: #2f2f2f;
+            color: 	#8b6914;
         }
 
     </style>
