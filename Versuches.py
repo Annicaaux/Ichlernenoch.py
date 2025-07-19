@@ -1680,359 +1680,358 @@ with tab6:
                     st.balloons()
                     st.success("🏆 Badge freigeschaltet: Story Collector!")
 with tab7 
-# --- LERNINTERVALLE & TIMER SECTION ---
-st.markdown("---")
-st.header("⏰ Wissenschaftliche Lernintervalle & Timer")
-
-st.markdown("""
-<div class="custom-card" style="background: linear-gradient(135deg, #E0F2FE, #DBEAFE); border-left: 4px solid #2563EB;">
-    <p style="margin: 0; color: #1E40AF;">
-        <strong>Optimiere deine Lernzeit!</strong> 
-        Nutze wissenschaftlich fundierte Intervalle für maximale Produktivität und Erholung.
-        Die App erinnert dich automatisch an Pausen.
-    </p>
-</div>
-""", unsafe_allow_html=True)
-
-# Lernmethoden Definition
-learning_methods = {
-    "🧠 Auswendiglernen": {
-        "description": "Viele kurze Pausen zum Abspeichern",
-        "work_time": 20,
-        "break_time": 5,
-        "long_break": 15,
-        "cycles_before_long": 4,
-        "color": "#F59E0B",
-        "tips": [
-            "Nutze die Pausen zum mentalen Wiederholen",
-            "Schließe die Augen und rufe das Gelernte ab",
-            "Mache in der Pause leichte Bewegungen"
-        ]
-    },
-    "📚 Neue Inhalte erarbeiten": {
-        "description": "Längere Intervalle zum Vertiefen",
-        "work_time": 45,
-        "break_time": 10,
-        "long_break": 30,
-        "cycles_before_long": 3,
-        "color": "#10B981",
-        "tips": [
-            "Nutze die Pausen zum Reflektieren",
-            "Schreibe Kerngedanken auf",
-            "Lasse deinen Geist wandern"
-        ]
-    },
-    "🎯 60-60-30 Methode": {
-        "description": "Hochfokussierte Arbeit mit längerer Erholung",
-        "work_time": 55,
-        "break_time": 5,
-        "long_break": 30,
-        "cycles_before_long": 2,
-        "color": "#8B5CF6",
-        "special_cycle": [55, 5, 60, 30],  # Spezieller Zyklus
-        "tips": [
-            "Erste 55 Min: Volle Konzentration",
-            "5 Min Pause: Kurz durchatmen",
-            "Nächste 60 Min: Deep Work",
-            "30 Min Pause: Richtig erholen"
-        ]
-    },
-    "🍅 Pomodoro Classic": {
-        "description": "Der Klassiker für Fokus",
-        "work_time": 25,
-        "break_time": 5,
-        "long_break": 20,
-        "cycles_before_long": 4,
-        "color": "#EF4444",
-        "tips": [
-            "Eine Aufgabe pro Pomodoro",
-            "Keine Unterbrechungen erlaubt",
-            "Pausen sind heilig"
-        ]
-    },
-    "🌊 Flow-State (90-20)": {
-        "description": "Ultradiane Rhythmen nutzen",
-        "work_time": 90,
-        "break_time": 20,
-        "long_break": 30,
-        "cycles_before_long": 2,
-        "color": "#06B6D4",
-        "tips": [
-            "Folge deinem natürlichen Rhythmus",
-            "90 Min = optimale Konzentrationsspanne",
-            "20 Min Pause für echte Erholung"
-        ]
-    }
-}
-
-# WOOP-Methode Integration
-with st.expander("🎯 WOOP-Methode: Plane deine Lernziele"):
-    st.markdown("""
-    **WOOP** (Wish, Outcome, Obstacle, Plan) hilft dir, realistische Ziele zu setzen und zu erreichen.
-    """)
-    
-    col1, col2 = st.columns(2)
-    with col1:
-        st.session_state.woop_goals["wish"] = st.text_area(
-            "🌟 **W**ish - Was möchtest du heute schaffen?",
-            value=st.session_state.woop_goals["wish"],
-            placeholder="z.B. Kapitel 5 verstehen und zusammenfassen"
-        )
-        st.session_state.woop_goals["outcome"] = st.text_area(
-            "✨ **O**utcome - Wie wirst du dich fühlen?",
-            value=st.session_state.woop_goals["outcome"],
-            placeholder="z.B. Erleichtert und stolz auf mich"
-        )
-    
-    with col2:
-        st.session_state.woop_goals["obstacle"] = st.text_area(
-            "🚧 **O**bstacle - Was könnte dich hindern?",
-            value=st.session_state.woop_goals["obstacle"],
-            placeholder="z.B. Instagram-Ablenkung, Müdigkeit"
-        )
-        st.session_state.woop_goals["plan"] = st.text_area(
-            "📋 **P**lan - Wenn-Dann-Plan",
-            value=st.session_state.woop_goals["plan"],
-            placeholder="z.B. Wenn ich müde werde, dann mache ich 5 Min Bewegung"
-        )
-
-# Methodenauswahl
-col1, col2 = st.columns([2, 1])
-
-with col1:
-    selected_method = st.selectbox(
-        "Wähle deine Lernmethode:",
-        options=list(learning_methods.keys()),
-        help="Jede Methode ist für unterschiedliche Lernziele optimiert"
-    )
-
-with col2:
-    method = learning_methods[selected_method]
-    st.markdown(f"""
-    <div style="background: {method['color']}; color: white; padding: 1rem; 
-                border-radius: 10px; text-align: center;">
-        <strong>{method['description']}</strong>
-    </div>
-    """, unsafe_allow_html=True)
-
-# Timer-Kontrollen
-st.markdown("---")
-col1, col2, col3, col4 = st.columns(4)
-
-with col1:
-    if not st.session_state.learning_timer_active:
-        if st.button("▶️ Timer starten", type="primary", use_container_width=True):
-            st.session_state.learning_timer_active = True
-            st.session_state.timer_start = datetime.now()
-            st.session_state.selected_method = selected_method
-            st.session_state.current_interval = "work"
-            st.session_state.interval_count = 0
-            
-            # Browser-Notifikation aktivieren
-            st.markdown("""
-            <script>
-            if ("Notification" in window) {
-                Notification.requestPermission();
-            }
-            </script>
-            """, unsafe_allow_html=True)
-            
-            st.success("Timer gestartet! Viel Erfolg beim Lernen! 📚")
-            st.rerun()
-    else:
-        if st.button("⏸️ Pausieren", use_container_width=True):
-            st.session_state.learning_timer_active = False
-            st.info("Timer pausiert")
-            st.rerun()
-
-with col2:
-    if st.button("⏹️ Stoppen", use_container_width=True):
-        if st.session_state.timer_start:
-            duration = (datetime.now() - st.session_state.timer_start).seconds // 60
-            st.session_state.total_learning_time += duration
-        st.session_state.learning_timer_active = False
-        st.session_state.timer_start = None
-        st.session_state.current_interval = None
-        st.success(f"Gut gemacht! Du hast {duration} Minuten gelernt!")
-        st.rerun()
-
-with col3:
-    if st.button("🔄 Reset", use_container_width=True):
-        st.session_state.interval_count = 0
-        st.session_state.current_interval = None
-        st.info("Timer zurückgesetzt")
-        st.rerun()
-
-with col4:
-    st.metric("Intervalle", st.session_state.interval_count)
-
-# Timer-Anzeige
-if st.session_state.learning_timer_active and st.session_state.timer_start:
-    method = learning_methods[st.session_state.selected_method]
-    
-    # Berechne verbleibende Zeit
-    elapsed = (datetime.now() - st.session_state.timer_start).seconds
-    
-    if st.session_state.current_interval == "work":
-        total_time = method['work_time'] * 60
-        interval_type = "🎯 Lernzeit"
-        next_interval = "Pause"
-    else:
-        total_time = method['break_time'] * 60
-        interval_type = "☕ Pause"
-        next_interval = "Lernzeit"
-    
-    remaining = max(0, total_time - elapsed)
-    progress = min(1.0, elapsed / total_time)
-    
-    # Timer-Display
-    st.markdown(f"""
-    <div class="custom-card" style="background: linear-gradient(135deg, #FEF3C7, #FDE68A); 
-                                    text-align: center; padding: 2rem;">
-        <h2 style="color: #92400E; margin: 0;">{interval_type}</h2>
-        <h1 style="color: #78350F; font-size: 4rem; margin: 1rem 0;">
-            {remaining // 60:02d}:{remaining % 60:02d}
-        </h1>
-        <p style="color: #92400E;">Nächste Phase: {next_interval}</p>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    # Progress Bar
-    st.progress(progress)
-    
-    # Automatischer Übergang
-    if remaining == 0:
-        if st.session_state.current_interval == "work":
-            st.session_state.current_interval = "break"
-            st.session_state.interval_count += 1
-            
-            # Notifikation
-            st.markdown("""
-            <script>
-            if ("Notification" in window && Notification.permission === "granted") {
-                new Notification("Zeit für eine Pause! 🎉", {
-                    body: "Du hast es geschafft! Zeit zum Entspannen.",
-                    icon: "🎯"
-                });
-            }
-            </script>
-            """, unsafe_allow_html=True)
-            
-            st.balloons()
-            st.success("🎉 Geschafft! Zeit für eine Pause!")
-        else:
-            st.session_state.current_interval = "work"
-            
-            st.markdown("""
-            <script>
-            if ("Notification" in window && Notification.permission === "granted") {
-                new Notification("Zurück ans Werk! 💪", {
-                    body: "Die Pause ist vorbei. Auf geht's!",
-                    icon: "📚"
-                });
-            }
-            </script>
-            """, unsafe_allow_html=True)
-            
-            st.info("Pause vorbei! Weiter geht's! 💪")
-        
-        st.session_state.timer_start = datetime.now()
-        pytime.sleep(2)
-        st.rerun()
-
-# Pausenaktivitäten für Lernintervalle
-if st.session_state.current_interval == "break":
     st.markdown("---")
-    st.subheader("🌟 Optimale Pausenaktivitäten")
-    
-    pause_activities = {
-        "🕺 Bewegung & Tanz": [
-            {"name": "Aerobic-Tanz", "time": "3-5 Min", "benefit": "Aktiviert Kreislauf & Gehirn"},
-            {"name": "Yoga-Flow", "time": "5 Min", "benefit": "Löst Verspannungen"},
-            {"name": "Hampelmänner", "time": "2 Min", "benefit": "Schneller Energieboost"},
-            {"name": "Dehnübungen", "time": "5 Min", "benefit": "Entspannt Muskulatur"}
-        ],
-        "🎵 Kreativ & Musikalisch": [
-            {"name": "Lieblingslied singen", "time": "3-4 Min", "benefit": "Hebt Stimmung & reduziert Stress"},
-            {"name": "Instrument spielen", "time": "5 Min", "benefit": "Aktiviert andere Gehirnareale"},
-            {"name": "Summen & Tanzen", "time": "3 Min", "benefit": "Kombiniert Bewegung & Musik"}
-        ],
-        "🧘 Mind-Wandering": [
-            {"name": "Tagträumen am Fenster", "time": "5 Min", "benefit": "Fördert Kreativität"},
-            {"name": "Achtsamkeits-Spaziergang", "time": "10 Min", "benefit": "Reset für's Gehirn"},
-            {"name": "Doodle/Kritzeln", "time": "5 Min", "benefit": "Entspannt & aktiviert"},
-            {"name": "Mandala ausmalen", "time": "10 Min", "benefit": "Meditative Wirkung"}
-        ],
-        "🧠 Kognitive Erholung": [
-            {"name": "Atemübung 4-7-8", "time": "3 Min", "benefit": "Beruhigt Nervensystem"},
-            {"name": "Progressive Muskelentspannung", "time": "5 Min", "benefit": "Tiefe Entspannung"},
-            {"name": "Visualisierung", "time": "5 Min", "benefit": "Mentale Erholung"},
-            {"name": "Meditation", "time": "5-10 Min", "benefit": "Verbessert Fokus"}
-        ]
-    }
-    
-    # Zufällige Aktivität pro Kategorie
-    for category, activities in pause_activities.items():
-        with st.expander(category):
-            activity = random.choice(activities)
-            st.markdown(f"""
-            <div style="background: #F0F9FF; padding: 1rem; border-radius: 10px; 
-                        border-left: 4px solid #0EA5E9;">
-                <h4 style="margin: 0;">{activity['name']}</h4>
-                <p style="margin: 0.5rem 0;">⏱️ {activity['time']} | 
-                ✨ {activity['benefit']}</p>
-            </div>
-            """, unsafe_allow_html=True)
-            
-            if st.button(f"Diese Aktivität machen", key=f"act_{category}"):
-                st.session_state.pause_statistics["solo_pausen"] += 1
-                st.session_state.reward_stamps += 1
-                st.success("Super! +1 Stempel für deine aktive Pause!")
+    st.header("⏰ Wissenschaftliche Lernintervalle & Timer")
 
-# Lernstatistiken
-st.markdown("---")
-st.subheader("📊 Deine Lernstatistik heute")
-
-col1, col2, col3, col4 = st.columns(4)
-with col1:
-    st.metric("Lernzeit gesamt", f"{st.session_state.total_learning_time} Min")
-with col2:
-    st.metric("Abgeschlossene Intervalle", st.session_state.interval_count)
-with col3:
-    focus_score = min(100, st.session_state.interval_count * 10)
-    st.metric("Fokus-Score", f"{focus_score}%")
-with col4:
-    st.metric("Produktive Pausen", st.session_state.pause_statistics["solo_pausen"])
-
-# Tipps für optimales Lernen
-with st.expander("💡 Tipps für optimales Lernen"):
     st.markdown("""
-    **🧠 Gehirngerechtes Lernen:**
-    - Nach 90 Min lässt die Konzentration natürlich nach
-    - Kurze Pausen (5-10 Min) erhalten den Fokus
-    - Lange Pausen (20-30 Min) ermöglichen Konsolidierung
-    
-    **🎯 Pausenqualität:**
-    - Bewegung aktiviert das Gehirn neu
-    - Tagträumen fördert kreative Lösungen
-    - Meditation verbessert die nächste Lernphase
-    - Handy-Pausen sind KEINE echten Pausen!
-    
-    **⚡ Energie-Management:**
-    - Morgens: Schwierige, neue Inhalte
-    - Mittags: Wiederholung, Übungen
-    - Abends: Leichtes Review, Planung
-    """)
+    <div class="custom-card" style="background: linear-gradient(135deg, #E0F2FE, #DBEAFE); border-left: 4px solid #2563EB;">
+        <p style="margin: 0; color: #1E40AF;">
+            <strong>Optimiere deine Lernzeit!</strong> 
+            Nutze wissenschaftlich fundierte Intervalle für maximale Produktivität und Erholung.
+            Die App erinnert dich automatisch an Pausen.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
 
-# Audio für Timer-Ende (optional)
-# Du kannst einen Ton abspielen wenn der Timer endet:
-def play_notification_sound():
-    audio_html = """
-    <audio autoplay>
-        <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBjiS1/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBjiS1/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBjiS1/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBjiS1/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBjiS1/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBjiS1/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBjiS1/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBjiS1/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBjiS1/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBjiS1/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBjiS1/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBjiS1/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBjiS1/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBjiS1/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBjiS1/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBjiS1/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBjiS1/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBjiS1/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBjiS1/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBjiS1/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBjiS1/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBjiS1/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBjiS1/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBjiS1/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBjiS1/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBj==")
-    </audio>
-    """
-    st.markdown(audio_html, unsafe_allow_html=True)
+    # Lernmethoden Definition
+    learning_methods = {
+        "🧠 Auswendiglernen": {
+            "description": "Viele kurze Pausen zum Abspeichern",
+            "work_time": 20,
+            "break_time": 5,
+            "long_break": 15,
+            "cycles_before_long": 4,
+            "color": "#F59E0B",
+            "tips": [
+                "Nutze die Pausen zum mentalen Wiederholen",
+                "Schließe die Augen und rufe das Gelernte ab",
+                "Mache in der Pause leichte Bewegungen"
+            ]
+        },
+        "📚 Neue Inhalte erarbeiten": {
+            "description": "Längere Intervalle zum Vertiefen",
+            "work_time": 45,
+            "break_time": 10,
+            "long_break": 30,
+            "cycles_before_long": 3,
+            "color": "#10B981",
+            "tips": [
+                "Nutze die Pausen zum Reflektieren",
+                "Schreibe Kerngedanken auf",
+                "Lasse deinen Geist wandern"
+            ]
+        },
+        "🎯 60-60-30 Methode": {
+            "description": "Hochfokussierte Arbeit mit längerer Erholung",
+            "work_time": 55,
+            "break_time": 5,
+            "long_break": 30,
+            "cycles_before_long": 2,
+            "color": "#8B5CF6",
+            "special_cycle": [55, 5, 60, 30],  # Spezieller Zyklus
+            "tips": [
+                "Erste 55 Min: Volle Konzentration",
+                "5 Min Pause: Kurz durchatmen",
+                "Nächste 60 Min: Deep Work",
+                "30 Min Pause: Richtig erholen"
+            ]
+        },
+        "🍅 Pomodoro Classic": {
+            "description": "Der Klassiker für Fokus",
+            "work_time": 25,
+            "break_time": 5,
+            "long_break": 20,
+            "cycles_before_long": 4,
+            "color": "#EF4444",
+            "tips": [
+                "Eine Aufgabe pro Pomodoro",
+                "Keine Unterbrechungen erlaubt",
+                "Pausen sind heilig"
+            ]
+        },
+        "🌊 Flow-State (90-20)": {
+            "description": "Ultradiane Rhythmen nutzen",
+            "work_time": 90,
+            "break_time": 20,
+            "long_break": 30,
+            "cycles_before_long": 2,
+            "color": "#06B6D4",
+            "tips": [
+                "Folge deinem natürlichen Rhythmus",
+                "90 Min = optimale Konzentrationsspanne",
+                "20 Min Pause für echte Erholung"
+            ]
+        }
+    }
+
+    # WOOP-Methode Integration
+    with st.expander("🎯 WOOP-Methode: Plane deine Lernziele"):
+        st.markdown("""
+        **WOOP** (Wish, Outcome, Obstacle, Plan) hilft dir, realistische Ziele zu setzen und zu erreichen.
+        """)
+    
+        col1, col2 = st.columns(2)
+        with col1:
+            st.session_state.woop_goals["wish"] = st.text_area(
+                "🌟 **W**ish - Was möchtest du heute schaffen?",
+                value=st.session_state.woop_goals["wish"],
+                placeholder="z.B. Kapitel 5 verstehen und zusammenfassen"
+            )
+            st.session_state.woop_goals["outcome"] = st.text_area(
+                "✨ **O**utcome - Wie wirst du dich fühlen?",
+                value=st.session_state.woop_goals["outcome"],
+                placeholder="z.B. Erleichtert und stolz auf mich"
+            )
+    
+        with col2:
+            st.session_state.woop_goals["obstacle"] = st.text_area(
+                "🚧 **O**bstacle - Was könnte dich hindern?",
+                value=st.session_state.woop_goals["obstacle"],
+                placeholder="z.B. Instagram-Ablenkung, Müdigkeit"
+            )
+            st.session_state.woop_goals["plan"] = st.text_area(
+                "📋 **P**lan - Wenn-Dann-Plan",
+                value=st.session_state.woop_goals["plan"],
+                placeholder="z.B. Wenn ich müde werde, dann mache ich 5 Min Bewegung"
+            )
+
+    # Methodenauswahl
+    col1, col2 = st.columns([2, 1])
+    
+    with col1:
+        selected_method = st.selectbox(
+            "Wähle deine Lernmethode:",
+            options=list(learning_methods.keys()),
+            help="Jede Methode ist für unterschiedliche Lernziele optimiert"
+        )
+
+    with col2:
+        method = learning_methods[selected_method]
+        st.markdown(f"""
+        <div style="background: {method['color']}; color: white; padding: 1rem; 
+                    border-radius: 10px; text-align: center;">
+            <strong>{method['description']}</strong>
+        </div>
+        """, unsafe_allow_html=True)
+
+    # Timer-Kontrollen
+    st.markdown("---")
+    col1, col2, col3, col4 = st.columns(4)
+
+    with col1:
+        if not st.session_state.learning_timer_active:
+            if st.button("▶️ Timer starten", type="primary", use_container_width=True):
+                st.session_state.learning_timer_active = True
+                st.session_state.timer_start = datetime.now()
+                st.session_state.selected_method = selected_method
+                st.session_state.current_interval = "work"
+                st.session_state.interval_count = 0
+            
+                # Browser-Notifikation aktivieren
+                st.markdown("""
+                <script>
+                if ("Notification" in window) {
+                    Notification.requestPermission();
+                }
+                </script>
+                """, unsafe_allow_html=True)
+            
+                st.success("Timer gestartet! Viel Erfolg beim Lernen! 📚")
+                st.rerun()
+        else:
+            if st.button("⏸️ Pausieren", use_container_width=True):
+                st.session_state.learning_timer_active = False
+                st.info("Timer pausiert")
+                st.rerun()
+
+    with col2:
+        if st.button("⏹️ Stoppen", use_container_width=True):
+            if st.session_state.timer_start:
+                duration = (datetime.now() - st.session_state.timer_start).seconds // 60
+                st.session_state.total_learning_time += duration
+            st.session_state.learning_timer_active = False
+            st.session_state.timer_start = None
+            st.session_state.current_interval = None
+            st.success(f"Gut gemacht! Du hast {duration} Minuten gelernt!")
+            st.rerun()
+    
+    with col3:
+        if st.button("🔄 Reset", use_container_width=True):
+            st.session_state.interval_count = 0
+            st.session_state.current_interval = None
+            st.info("Timer zurückgesetzt")
+            st.rerun()
+
+    with col4:
+        st.metric("Intervalle", st.session_state.interval_count)
+
+    # Timer-Anzeige
+    if st.session_state.learning_timer_active and st.session_state.timer_start:
+        method = learning_methods[st.session_state.selected_method]
+    
+        # Berechne verbleibende Zeit
+        elapsed = (datetime.now() - st.session_state.timer_start).seconds
+    
+        if st.session_state.current_interval == "work":
+            total_time = method['work_time'] * 60
+            interval_type = "🎯 Lernzeit"
+            next_interval = "Pause"
+        else:
+            total_time = method['break_time'] * 60
+            interval_type = "☕ Pause"
+            next_interval = "Lernzeit"
+    
+        remaining = max(0, total_time - elapsed)
+        progress = min(1.0, elapsed / total_time)
+    
+        # Timer-Display
+        st.markdown(f"""
+        <div class="custom-card" style="background: linear-gradient(135deg, #FEF3C7, #FDE68A); 
+                                        text-align: center; padding: 2rem;">
+            <h2 style="color: #92400E; margin: 0;">{interval_type}</h2>
+            <h1 style="color: #78350F; font-size: 4rem; margin: 1rem 0;">
+                {remaining // 60:02d}:{remaining % 60:02d}
+            </h1>
+            <p style="color: #92400E;">Nächste Phase: {next_interval}</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+        # Progress Bar
+        st.progress(progress)
+    
+        # Automatischer Übergang
+        if remaining == 0:
+            if st.session_state.current_interval == "work":
+                st.session_state.current_interval = "break"
+                st.session_state.interval_count += 1
+            
+                # Notifikation
+                st.markdown("""
+                <script>
+                if ("Notification" in window && Notification.permission === "granted") {
+                    new Notification("Zeit für eine Pause! 🎉", {
+                        body: "Du hast es geschafft! Zeit zum Entspannen.",
+                        icon: "🎯"
+                    });
+                    }
+                </script>
+                """, unsafe_allow_html=True)
+            
+                st.balloons()
+                st.success("🎉 Geschafft! Zeit für eine Pause!")
+            else:
+                st.session_state.current_interval = "work"
+            
+                st.markdown("""
+                <script>
+                if ("Notification" in window && Notification.permission === "granted") {
+                    new Notification("Zurück ans Werk! 💪", {
+                        body: "Die Pause ist vorbei. Auf geht's!",
+                        icon: "📚"
+                    });
+                }
+                </script>
+                """, unsafe_allow_html=True)
+            
+                st.info("Pause vorbei! Weiter geht's! 💪")
+        
+            st.session_state.timer_start = datetime.now()
+            pytime.sleep(2)
+            st.rerun()
+
+    # Pausenaktivitäten für Lernintervalle
+    if st.session_state.current_interval == "break":
+        st.markdown("---")
+        st.subheader("🌟 Optimale Pausenaktivitäten")
+    
+        pause_activities = {
+            "🕺 Bewegung & Tanz": [
+                {"name": "Aerobic-Tanz", "time": "3-5 Min", "benefit": "Aktiviert Kreislauf & Gehirn"},
+                {"name": "Yoga-Flow", "time": "5 Min", "benefit": "Löst Verspannungen"},
+                {"name": "Hampelmänner", "time": "2 Min", "benefit": "Schneller Energieboost"},
+                {"name": "Dehnübungen", "time": "5 Min", "benefit": "Entspannt Muskulatur"}
+            ],
+            "🎵 Kreativ & Musikalisch": [
+                {"name": "Lieblingslied singen", "time": "3-4 Min", "benefit": "Hebt Stimmung & reduziert Stress"},
+                {"name": "Instrument spielen", "time": "5 Min", "benefit": "Aktiviert andere Gehirnareale"},
+                {"name": "Summen & Tanzen", "time": "3 Min", "benefit": "Kombiniert Bewegung & Musik"}
+            ],
+            "🧘 Mind-Wandering": [
+                {"name": "Tagträumen am Fenster", "time": "5 Min", "benefit": "Fördert Kreativität"},
+                {"name": "Achtsamkeits-Spaziergang", "time": "10 Min", "benefit": "Reset für's Gehirn"},
+                {"name": "Doodle/Kritzeln", "time": "5 Min", "benefit": "Entspannt & aktiviert"},
+                {"name": "Mandala ausmalen", "time": "10 Min", "benefit": "Meditative Wirkung"}
+            ],
+            "🧠 Kognitive Erholung": [
+                {"name": "Atemübung 4-7-8", "time": "3 Min", "benefit": "Beruhigt Nervensystem"},
+                {"name": "Progressive Muskelentspannung", "time": "5 Min", "benefit": "Tiefe Entspannung"},
+                {"name": "Visualisierung", "time": "5 Min", "benefit": "Mentale Erholung"},
+                {"name": "Meditation", "time": "5-10 Min", "benefit": "Verbessert Fokus"}
+            ]
+        }
+    
+        # Zufällige Aktivität pro Kategorie
+        for category, activities in pause_activities.items():
+            with st.expander(category):
+                activity = random.choice(activities)
+                st.markdown(f"""
+                <div style="background: #F0F9FF; padding: 1rem; border-radius: 10px; 
+                            border-left: 4px solid #0EA5E9;">
+                    <h4 style="margin: 0;">{activity['name']}</h4>
+                    <p style="margin: 0.5rem 0;">⏱️ {activity['time']} | 
+                    ✨ {activity['benefit']}</p>
+                </div>
+                """, unsafe_allow_html=True)
+            
+                if st.button(f"Diese Aktivität machen", key=f"act_{category}"):
+                    st.session_state.pause_statistics["solo_pausen"] += 1
+                    st.session_state.reward_stamps += 1
+                    st.success("Super! +1 Stempel für deine aktive Pause!")
+
+    # Lernstatistiken
+    st.markdown("---")
+    st.subheader("📊 Deine Lernstatistik heute")
+
+    col1, col2, col3, col4 = st.columns(4)
+    with col1:
+        st.metric("Lernzeit gesamt", f"{st.session_state.total_learning_time} Min")
+    with col2:
+        st.metric("Abgeschlossene Intervalle", st.session_state.interval_count)
+    with col3:
+        focus_score = min(100, st.session_state.interval_count * 10)
+        st.metric("Fokus-Score", f"{focus_score}%")
+    with col4:
+        st.metric("Produktive Pausen", st.session_state.pause_statistics["solo_pausen"])
+
+    # Tipps für optimales Lernen
+    with st.expander("💡 Tipps für optimales Lernen"):
+        st.markdown("""
+        **🧠 Gehirngerechtes Lernen:**
+        - Nach 90 Min lässt die Konzentration natürlich nach
+        - Kurze Pausen (5-10 Min) erhalten den Fokus
+        - Lange Pausen (20-30 Min) ermöglichen Konsolidierung
+    
+        **🎯 Pausenqualität:**
+        - Bewegung aktiviert das Gehirn neu
+        - Tagträumen fördert kreative Lösungen
+        - Meditation verbessert die nächste Lernphase
+        - Handy-Pausen sind KEINE echten Pausen!
+    
+        **⚡ Energie-Management:**
+        - Morgens: Schwierige, neue Inhalte
+        - Mittags: Wiederholung, Übungen
+        - Abends: Leichtes Review, Planung
+        """)
+
+    # Audio für Timer-Ende (optional)
+    # Du kannst einen Ton abspielen wenn der Timer endet:
+    def play_notification_sound():
+        audio_html = """
+        <audio autoplay>
+            <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBjiS1/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBjiS1/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBjiS1/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBjiS1/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBjiS1/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBjiS1/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBjiS1/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBjiS1/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBjiS1/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBjiS1/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBjiS1/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBjiS1/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBjiS1/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBjiS1/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBjiS1/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBjiS1/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBjiS1/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBjiS1/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBjiS1/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBjiS1/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBjiS1/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBjiS1/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBjiS1/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBjiS1/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBjiS1/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBj==")
+        </audio>
+        """
+        st.markdown(audio_html, unsafe_allow_html=True)
 
 # --- Level-System am Ende der Seite ---
 
