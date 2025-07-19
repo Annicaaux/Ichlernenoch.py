@@ -328,9 +328,6 @@ with tab1:
         unsafe_allow_html=True
     )
     
-    </div>
-    """, unsafe_allow_html=True)
-          
             st.markdown("---")
                
 
