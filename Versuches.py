@@ -490,7 +490,7 @@ with tab4:
             
             st.markdown(f"""
             <div class="custom-card" style="border-left: 4px solid #059669;">
-                <h4>📍 {activity['name']}</h4>
+                <h4> {activity['name']}</h4>
                 <p><strong>Ort:</strong> {activity['location']} | <strong>Dauer:</strong> {activity['duration']}</p>
                 <p style="font-style: italic;">{activity['description']}</p>
             </div>
