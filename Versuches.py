@@ -1679,7 +1679,7 @@ with tab6:
                     st.session_state.conversation_badges["story_collector"] = True
                     st.balloons()
                     st.success("🏆 Badge freigeschaltet: Story Collector!")
-with tab7 
+with tab7: 
     st.markdown("---")
     st.header("⏰ Wissenschaftliche Lernintervalle & Timer")
 
